@@ -1,64 +1,97 @@
 "use client";
-
 import Link from "next/link";
 import { useState } from "react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  HomeIcon,
+  BookOpenIcon,
+  PencilSquareIcon,
+  ChatBubbleBottomCenterTextIcon,
+  UserCircleIcon,
+} from "@heroicons/react/24/outline";
+
+// Custom CSS for smooth bounce effect
+const bounceAnimation = `
+@keyframes smoothBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-30px); 
+  }
+}
+.smooth-bounce {
+  animation: smoothBounce 0.8s ease-in-out infinite;
+}
+`;
 
 const Navigation = () => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleMenu = () => setIsOpen(!isOpen);
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   const navItems = [
-    { href: "/Home", label: "Home" },
-    { href: "/category", label: "Category" },
-    { href: "/post", label: "Post" },
-    { href: "/messages", label: "Messages" },
-    { href: "/profile", label: "My Profile" },
+    { href: "/Home", label: "Home", icon: <HomeIcon className="w-8 h-8" /> },
+    {
+      href: "/category",
+      label: "Category",
+      icon: <BookOpenIcon className="w-8 h-8" />,
+    },
+    {
+      href: "/post",
+      label: "Post",
+      icon: <PencilSquareIcon className="w-8 h-8" />,
+    },
+    {
+      href: "/messages",
+      label: "Messages",
+      icon: <ChatBubbleBottomCenterTextIcon className="w-8 h-8" />,
+    },
+    {
+      href: "/profile",
+      label: "My Profile",
+      icon: <UserCircleIcon className="w-8 h-8" />,
+    },
   ];
 
   return (
-    <nav className="glassmorphism sticky top-0 z-10 mb-8">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center py-4">
-          <Link href="/" className="text-2xl font-bold text-glow text-primary">
-           FredMarket
-          </Link>
-          <div className="hidden md:flex space-x-4">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="hover:text-primary transition duration-300"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </div>
-          <button className="md:hidden" onClick={toggleMenu}>
-            {isOpen ? (
-              <XMarkIcon className="h-6 w-6 text-primary" />
-            ) : (
-              <Bars3Icon className="h-6 w-6 text-primary" />
-            )}
-          </button>
-        </div>
-      </div>
-      {isOpen && (
-        <div className="md:hidden">
+    <>
+      {/* Inject custom CSS for smooth bounce */}
+      <style>{bounceAnimation}</style>
+
+      <nav
+        className="glassmorphism fixed md:top-4 md:left-0 md:right-0 md:z-50 md:mx-auto md:max-w-5xl md:rounded-lg md:py-4 md:px-4 md:shadow-md md:backdrop-blur-lg bottom-0 left-0 right-0 z-50 mx-auto max-w-full rounded-none py-2 px-2 shadow-none backdrop-blur-none"
+        style={{ height: "80px" }}
+      >
+        {/* Centered Dock */}
+        <div className="flex justify-center items-center space-x-10 md:space-x-10">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="block py-2 px-4 text-sm hover:bg-white/10 transition duration-300"
-              onClick={toggleMenu}
+              className="relative flex flex-col items-center justify-center text-primary transition duration-300"
+              onMouseEnter={() => setHoveredItem(item.label)}
+              onMouseLeave={() => setHoveredItem(null)}
             >
-              {item.label}
+              {/* Icon (With Smooth Bounce Effect) */}
+              <span
+                className={`text-4xl font-bold ${
+                  hoveredItem === item.label
+                    ? "smooth-bounce text-primary/80"
+                    : "text-primary"
+                }`}
+              >
+                {item.icon}
+              </span>
+
+              {/* Label (Visible on hover) */}
+              {hoveredItem === item.label && (
+                <span className="absolute bottom-[-50px] text-sm font-medium bg-white/80 px-4 py-2 rounded-md shadow-md">
+                  {item.label}
+                </span>
+              )}
             </Link>
           ))}
         </div>
-      )}
-    </nav>
+      </nav>
+    </>
   );
 };
 

@@ -129,7 +129,7 @@ export default function Category() {
   );
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="space-y-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-blue-50">
       {/* Header */}
       <h1 className="text-4xl font-bold text-center text-primary mb-8">
         Explore Categories

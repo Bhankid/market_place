@@ -4,7 +4,7 @@ import Auth from "@/app/components/Auth";
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-300">
       {/* Header Section */}
       <header className="mb-8">
         <h1 className="text-4xl font-bold text-center text-blue-600 tracking-wide">

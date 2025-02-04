@@ -19,11 +19,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.className} bg-background text-foreground min-h-screen`}
+        className={`${inter.className} bg-slate-200 text-foreground min-h-screen`}
       >
         <div className="flex flex-col min-h-screen">
           <Navigation />
-          <main className="flex-grow container mx-auto px-4 py-8">
+          <main className="flex-grow container mx-auto px-4 py-8 md:py-28">
             {children}
           </main>
           <Footer companyName="FredMarket" />
