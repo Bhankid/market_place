@@ -10,7 +10,7 @@ const Navigation = () => {
   const toggleMenu = () => setIsOpen(!isOpen);
 
   const navItems = [
-    { href: "/", label: "Home" },
+    { href: "/Home", label: "Home" },
     { href: "/category", label: "Category" },
     { href: "/post", label: "Post" },
     { href: "/messages", label: "Messages" },
