@@ -3,19 +3,27 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: 20 20 20;
+  --foreground: 255 255 255;
+  --primary: 0 225 244;
+  --secondary: 255 0 255;
+  --accent: 138 58 185;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    @apply bg-background text-foreground;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .glassmorphism {
+    @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-lg;
+  }
+}
+
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 10px rgb(var(--primary) / 0.5), 0 0 20px rgb(var(--primary) / 0.3), 0 0 30px rgb(var(--primary) / 0.1);
+  }
 }
