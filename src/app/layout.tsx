@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.className} bg-slate-200 text-foreground min-h-screen`}
+        className={`${inter.className} bg-slate-100 text-foreground min-h-screen`}
       >
         <div className="flex flex-col min-h-screen">
           <Navigation />

@@ -2,7 +2,7 @@
 import Auth from "@/app/components/Auth";
 
 
-export default function Home() {
+export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-300">
       {/* Header Section */}
