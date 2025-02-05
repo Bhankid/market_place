@@ -1,8 +1,13 @@
 "use client";
 import { useState } from "react";
-import dynamic from "next/dynamic"; // For lazy loading react-dropzone
-
+import dynamic from "next/dynamic";
+import Image from "next/image"; 
 const Dropzone = dynamic(() => import("react-dropzone"), { ssr: false });
+
+// Define a type for extraFields
+type ExtraFields = {
+  [key: string]: string;
+};
 
 // Expanded list of categories
 const categories = [
@@ -76,12 +81,12 @@ const ghanaianCities = [
 export default function Post() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState(null);
+  const [category, setCategory] = useState<number | null>(null);
   const [brand, setBrand] = useState("");
   const [location, setLocation] = useState("");
   const [exchangePossible, setExchangePossible] = useState(false);
   const [price, setPrice] = useState("");
-  const [negotiation, setNegotiation] = useState("No");
+  const [negotiation, setNegotiation] = useState<"Yes" | "No" | "Not Sure">("No");
   const [delivery, setDelivery] = useState(false);
   const [deliveryDetails, setDeliveryDetails] = useState({
     itemToDeliver: "",
@@ -90,24 +95,14 @@ export default function Post() {
     deliveryCharge: "",
   });
   const [images, setImages] = useState<File[]>([]);
-  const [extraFields, setExtraFields] = useState({});
+  const [extraFields, setExtraFields] = useState<ExtraFields>({});
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (
-      !title ||
-      !category ||
-      images.length < 2 ||
-      !location ||
-      !brand ||
-      !description ||
-      !price
-    ) {
+    if (!title || !category || images.length < 2 || !location || !brand || !description || !price) {
       alert("Please fill in all required fields.");
       return;
     }
-
     console.log("New post:", {
       title,
       description,
@@ -119,7 +114,7 @@ export default function Post() {
       negotiation,
       deliveryDetails,
       extraFields,
-      images: images.map((image) => URL.createObjectURL(image)), // Convert images to URLs for logging
+      images: images.map((image) => URL.createObjectURL(image)),
     });
   };
 
@@ -136,15 +131,11 @@ export default function Post() {
   };
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedCategory = categories.find(
-      (cat) => cat.id === parseInt(e.target.value)
-    );
-    setCategory(selectedCategory?.id);
+    const selectedCategoryId = parseInt(e.target.value);
+    const selectedCategory = categories.find((cat) => cat.id === selectedCategoryId);
+    setCategory(selectedCategoryId || null);
     setExtraFields(
-      selectedCategory?.extraFields.reduce(
-        (acc, field) => ({ ...acc, [field]: "" }),
-        {}
-      )
+      selectedCategory?.extraFields.reduce((acc, field) => ({ ...acc, [field]: "" }), {} as ExtraFields) || {}
     );
   };
 
@@ -154,13 +145,8 @@ export default function Post() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-4xl font-bold mb-8 text-center text-primary text-glow">
-        Create a Post
-      </h1>
-      <form
-        onSubmit={handleSubmit}
-        className="glassmorphism p-8 rounded-lg space-y-6"
-      >
+      <h1 className="text-4xl font-bold mb-8 text-center text-primary text-glow">Create a Post</h1>
+      <form onSubmit={handleSubmit} className="glassmorphism p-8 rounded-lg space-y-6">
         {/* Title */}
         <div>
           <label htmlFor="title" className="block text-sm font-medium mb-2">
@@ -204,34 +190,26 @@ export default function Post() {
           <label className="block text-sm font-medium mb-2">
             Images <span className="text-red-500">*</span> (Minimum 2 Required)
           </label>
-          <Dropzone
-            onDropAccepted={handleImageDrop}
-            multiple
-            accept={{ "image/*": [] }}
-            maxFiles={5}
-          >
+          <Dropzone onDropAccepted={handleImageDrop} multiple accept={{ "image/*": [] }} maxFiles={5}>
             {({ getRootProps, getInputProps }) => (
               <div
                 {...getRootProps()}
                 className="border-2 border-dashed border-gray-300 rounded-md p-4 flex flex-col items-center justify-center cursor-pointer hover:border-primary transition duration-300"
               >
                 <input {...getInputProps()} />
-                <p className="text-sm text-gray-600">
-                  Drag and drop images here, or click to select.
-                </p>
+                <p className="text-sm text-gray-600">Drag and drop images here, or click to select.</p>
                 <p className="text-sm text-gray-500">(Maximum 5 images)</p>
               </div>
             )}
           </Dropzone>
           <div className="mt-2 grid grid-cols-3 gap-2">
             {images.map((image, index) => (
-              <div
-                key={index}
-                className="relative rounded-md overflow-hidden border border-gray-300"
-              >
-                <img
+              <div key={index} className="relative rounded-md overflow-hidden border border-gray-300">
+                <Image
                   src={URL.createObjectURL(image)}
                   alt={`Preview ${index}`}
+                  width={100}
+                  height={100}
                   className="w-full h-20 object-cover"
                 />
                 <button
@@ -244,9 +222,7 @@ export default function Post() {
             ))}
           </div>
           {images.length < 2 && (
-            <p className="text-sm text-red-500">
-              At least 2 images are required.
-            </p>
+            <p className="text-sm text-red-500">At least 2 images are required.</p>
           )}
         </div>
 
@@ -290,9 +266,7 @@ export default function Post() {
 
         {/* Exchange Possible */}
         <div>
-          <label className="block text-sm font-medium mb-2">
-            Exchange Possible?
-          </label>
+          <label className="block text-sm font-medium mb-2">Exchange Possible?</label>
           <div className="flex items-center space-x-4">
             <label className="flex items-center space-x-2 cursor-pointer">
               <input
@@ -319,10 +293,7 @@ export default function Post() {
 
         {/* Description */}
         <div>
-          <label
-            htmlFor="description"
-            className="block text-sm font-medium mb-2"
-          >
+          <label htmlFor="description" className="block text-sm font-medium mb-2">
             Description <span className="text-red-500">*</span>
           </label>
           <textarea
@@ -353,8 +324,7 @@ export default function Post() {
         {/* Negotiation Options */}
         <div>
           <label className="block text-sm font-medium mb-2">
-            Are you open for negotiations?{" "}
-            <span className="text-red-500">*</span>
+            Are you open for negotiations? <span className="text-red-500">*</span>
           </label>
           <div className="flex items-center space-x-4">
             <label className="flex items-center space-x-2 cursor-pointer">
@@ -401,10 +371,7 @@ export default function Post() {
               .find((cat) => cat.id === category)
               ?.extraFields.map((field) => (
                 <div key={field}>
-                  <label
-                    htmlFor={field}
-                    className="block text-sm font-medium mb-2"
-                  >
+                  <label htmlFor={field} className="block text-sm font-medium mb-2">
                     {field} <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -412,10 +379,7 @@ export default function Post() {
                     id={field}
                     value={extraFields[field] || ""}
                     onChange={(e) =>
-                      setExtraFields({
-                        ...extraFields,
-                        [field]: e.target.value,
-                      })
+                      setExtraFields({ ...extraFields, [field]: e.target.value })
                     }
                     className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                     required
@@ -444,10 +408,7 @@ export default function Post() {
           {delivery && (
             <div className="space-y-4 mt-4 border-t pt-4">
               <div>
-                <label
-                  htmlFor="itemToDeliver"
-                  className="block text-sm font-medium mb-2"
-                >
+                <label htmlFor="itemToDeliver" className="block text-sm font-medium mb-2">
                   Item to Deliver <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -465,10 +426,7 @@ export default function Post() {
                 />
               </div>
               <div>
-                <label
-                  htmlFor="deliveryLocation"
-                  className="block text-sm font-medium mb-2"
-                >
+                <label htmlFor="deliveryLocation" className="block text-sm font-medium mb-2">
                   Delivery Location <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -486,12 +444,8 @@ export default function Post() {
                 />
               </div>
               <div>
-                <label
-                  htmlFor="deliveryTime"
-                  className="block text-sm font-medium mb-2"
-                >
-                  Estimated Delivery Time{" "}
-                  <span className="text-red-500">*</span>
+                <label htmlFor="deliveryTime" className="block text-sm font-medium mb-2">
+                  Estimated Delivery Time <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -508,10 +462,7 @@ export default function Post() {
                 />
               </div>
               <div>
-                <label
-                  htmlFor="deliveryCharge"
-                  className="block text-sm font-medium mb-2"
-                >
+                <label htmlFor="deliveryCharge" className="block text-sm font-medium mb-2">
                   Delivery Charge <span className="text-red-500">*</span>
                 </label>
                 <input
