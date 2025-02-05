@@ -1,29 +1,67 @@
+/* Tailwind Directives */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Root Variables */
 :root {
-  --background: 20 20 20;
-  --foreground: 255 255 255;
-  --primary: 0 225 244;
-  --secondary: 255 0 255;
+  --background: 243 244 246;
+  /* Light gray */
+  --foreground: 17 24 39;
+  /* Dark text */
+  --primary: 0 149 246;
+  /* Blue */
+  --secondary: 100 116 139;
+  /* Grayish blue */
   --accent: 138 58 185;
+  /* Purple */
 }
 
-@layer base {
-  body {
-    @apply bg-background text-foreground;
-  }
+[data-theme="dark"] {
+  --background: 17 24 39;
+  /* Dark background */
+  --foreground: 243 244 246;
+  /* Light text */
+  --primary: 0 149 246;
+  /* Blue */
+  --secondary: 148 163 184;
+  /* Light gray */
+  --accent: 138 58 185;
+  /* Purple */
 }
 
-@layer components {
-  .glassmorphism {
-    @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-lg;
-  }
+/* Base Styles */
+body {
+  background-color: rgb(var(--background));
+  color: rgb(var(--foreground));
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-@layer utilities {
-  .text-glow {
-    text-shadow: 0 0 10px rgb(var(--primary) / 0.5), 0 0 20px rgb(var(--primary) / 0.3), 0 0 30px rgb(var(--primary) / 0.1);
-  }
+/* Glassmorphism Effect */
+.glassmorphism {
+  background: rgba(var(--background), 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(var(--foreground), 0.2);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Text Colors */
+.text-primary {
+  color: rgb(var(--primary));
+}
+
+.text-secondary {
+  color: rgb(var(--secondary));
+}
+
+.text-accent {
+  color: rgb(var(--accent));
+}
+
+/* Glow Effect */
+.text-glow {
+  text-shadow: 0 0 10px rgb(var(--primary) / 0.5),
+    0 0 20px rgb(var(--primary) / 0.3),
+    0 0 30px rgb(var(--primary) / 0.1);
 }

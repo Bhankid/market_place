@@ -7,7 +7,10 @@ import {
   PencilSquareIcon,
   ChatBubbleBottomCenterTextIcon,
   UserCircleIcon,
+  MoonIcon,
+  SunIcon,
 } from "@heroicons/react/24/outline";
+import { useTheme } from "@/app/Theme/theme-context";
 
 // Custom CSS for smooth scale-up and bounce effect
 const hoverEffect = `
@@ -22,17 +25,16 @@ const hoverEffect = `
     transform: scale(1.2) translateY(-10px); 
   }
 }
-
 .nav-item:hover .icon {
   animation: scaleAndBounce 0.5s ease-in-out forwards;
 }
-
 .nav-item:not(:hover) .icon {
   transform: scale(1) translateY(0); 
 }
 `;
 
 const Navigation = () => {
+  const { theme, toggleTheme } = useTheme();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   const navItems = [
@@ -67,34 +69,48 @@ const Navigation = () => {
         className="glassmorphism fixed md:top-4 md:left-0 md:right-0 md:z-50 md:mx-auto md:max-w-5xl md:rounded-lg md:py-4 md:px-4 md:shadow-md md:backdrop-blur-lg bottom-0 left-0 right-0 z-50 mx-auto max-w-full rounded-none py-2 px-2 shadow-none backdrop-blur-none"
         style={{ height: "70px" }}
       >
-        {/* Centered Dock */}
-        <div className="flex justify-center items-center space-x-10 md:space-x-10">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="relative flex flex-col items-center justify-center text-primary transition duration-300 nav-item"
-              onMouseEnter={() => setHoveredItem(item.label)}
-              onMouseLeave={() => setHoveredItem(null)}
-            >
-              {/* Icon (With Hover Effect) */}
-              <span
-                className={`text-4xl font-bold icon ${
-                  hoveredItem === item.label
-                    ? "text-primary/80"
-                    : "text-primary"
-                }`}
+        {/* Centered Dock with Light/Dark Toggle */}
+        <div className="flex justify-between items-center">
+          {/* Centered Navigation Links */}
+          <div className="flex justify-center items-center space-x-10 md:space-x-10 flex-grow">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="relative flex flex-col items-center justify-center text-primary transition duration-300 nav-item"
+                onMouseEnter={() => setHoveredItem(item.label)}
+                onMouseLeave={() => setHoveredItem(null)}
               >
-                {item.icon}
-              </span>
-              {/* Label (Visible on hover) */}
-              {hoveredItem === item.label && (
-                <span className="absolute bottom-[-50px] text-sm font-medium bg-white/80 px-4 py-2 rounded-md shadow-md">
-                  {item.label}
+                {/* Icon (With Hover Effect) */}
+                <span
+                  className={`text-4xl font-bold icon ${
+                    hoveredItem === item.label
+                      ? "text-primary/80"
+                      : "text-primary"
+                  }`}
+                >
+                  {item.icon}
                 </span>
-              )}
-            </Link>
-          ))}
+                {/* Label (Visible on hover) */}
+                {hoveredItem === item.label && (
+                  <span className="absolute bottom-[-50px] text-sm font-medium bg-white/80 px-4 py-2 rounded-md shadow-md">
+                    {item.label}
+                  </span>
+                )}
+              </Link>
+            ))}
+          </div>
+          {/* Light/Dark Toggle Switch */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition duration-300"
+          >
+            {theme === "light" ? (
+              <MoonIcon className="h-6 w-6 text-primary" />
+            ) : (
+              <SunIcon className="h-6 w-6 text-primary" />
+            )}
+          </button>
         </div>
       </nav>
     </>
